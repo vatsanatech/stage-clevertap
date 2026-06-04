@@ -516,16 +516,19 @@ class CleverTapPlugin {
 
   /// Switch CleverTap SDK's API endpoint at runtime.
   /// Must be called BEFORE the SDK makes its first network call.
-  /// Pass empty/null [proxyDomain] to fall back to default CleverTap servers.
-  static Future<void> changeCredentials(
-    String accountID,
-    String token, {
+  /// [accountID] and [token] are optional — when null/empty, the native side
+  /// reads them from AndroidManifest.xml (CLEVERTAP_ACCOUNT_ID/CLEVERTAP_TOKEN)
+  /// or iOS Info.plist (CleverTapAccountID/CleverTapToken). Pass null/empty
+  /// [proxyDomain] to fall back to default CleverTap servers.
+  static Future<void> changeCredentials({
+    String? accountID,
+    String? token,
     String? proxyDomain,
     String? spikyProxyDomain,
   }) async {
     await _dartToNativeMethodChannel.invokeMethod<void>('changeCredentials', {
-      'accountID': accountID,
-      'token': token,
+      'accountID': accountID ?? '',
+      'token': token ?? '',
       'proxyDomain': proxyDomain ?? '',
       'spikyProxyDomain': spikyProxyDomain ?? '',
     });
