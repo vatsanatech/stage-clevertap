@@ -222,6 +222,10 @@ class DartToNativePlatformCommunicator(
                 recordEvent(call, result)
             }
 
+            "changeCredentials" -> {
+                changeCredentials(call, result)
+            }
+
             "recordChargedEvent" -> {
                 recordChargedEvent(call, result)
             }
@@ -1781,6 +1785,15 @@ class DartToNativePlatformCommunicator(
         } else {
             result.error(TAG, ERROR_MSG, null)
         }
+    }
+
+    private fun changeCredentials(call: MethodCall, result: MethodChannel.Result) {
+        val accountID = call.argument<String>("accountID")!!
+        val token = call.argument<String>("token")!!
+        val proxyDomain = call.argument<String>("proxyDomain") ?: ""
+        val spikyProxyDomain = call.argument<String>("spikyProxyDomain") ?: ""
+        CleverTapAPI.changeCredentials(accountID, token, proxyDomain, spikyProxyDomain)
+        result.success(null)
     }
 
     private fun recordScreenView(call: MethodCall, result: MethodChannel.Result) {
