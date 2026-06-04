@@ -421,6 +421,15 @@ static NSDateFormatter *dateFormatter;
     NSString *proxyDomain = call.arguments[@"proxyDomain"] ?: @"";
     NSString *spikyProxyDomain = call.arguments[@"spikyProxyDomain"] ?: @"";
 
+    // Fall back to Info.plist values when caller doesn't provide accountID/token
+    // (iOS SDK requires non-nil strings, so we resolve them here).
+    if (accountID.length == 0) {
+        accountID = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CleverTapAccountID"] ?: @"";
+    }
+    if (token.length == 0) {
+        token = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CleverTapToken"] ?: @"";
+    }
+
     if (proxyDomain.length > 0 && spikyProxyDomain.length > 0) {
         [CleverTap setCredentialsWithAccountID:accountID token:token proxyDomain:proxyDomain spikyProxyDomain:spikyProxyDomain];
     } else if (proxyDomain.length > 0) {

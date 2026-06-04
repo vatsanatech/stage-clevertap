@@ -1810,8 +1810,11 @@ class DartToNativePlatformCommunicator(
     }
 
     private fun changeCredentials(call: MethodCall, result: MethodChannel.Result) {
-        val accountID = call.argument<String>("accountID")!!
-        val token = call.argument<String>("token")!!
+        // Pass null when caller provides empty strings — SDK's changeCredentials
+        // sets internal cc* fields, then ManifestInfo falls back to AndroidManifest
+        // values (CLEVERTAP_ACCOUNT_ID/CLEVERTAP_TOKEN) when cc* fields are null.
+        val accountID = call.argument<String>("accountID")?.takeIf { it.isNotEmpty() }
+        val token = call.argument<String>("token")?.takeIf { it.isNotEmpty() }
         val proxyDomain = call.argument<String>("proxyDomain") ?: ""
         val spikyProxyDomain = call.argument<String>("spikyProxyDomain") ?: ""
         CleverTapAPI.changeCredentials(accountID, token, proxyDomain, spikyProxyDomain)
