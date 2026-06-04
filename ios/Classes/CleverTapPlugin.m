@@ -85,6 +85,8 @@ static NSDateFormatter *dateFormatter;
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     else if ([@"recordEvent" isEqualToString:call.method])
         [self recordEvent:call withResult:result];
+    else if ([@"changeCredentials" isEqualToString:call.method])
+        [self changeCredentials:call withResult:result];
     else if ([@"setDebugLevel" isEqualToString:call.method])
         [self setDebugLog:call withResult:result];
     else if ([@"profileSet" isEqualToString:call.method])
@@ -408,8 +410,24 @@ static NSDateFormatter *dateFormatter;
 #pragma mark - Event API
 
 - (void)recordEvent:(FlutterMethodCall *)call withResult:(FlutterResult)result {
-    
+
     [[CleverTap sharedInstance] recordEvent:call.arguments[@"eventName"] withProps:call.arguments[@"eventData"]];
+    result(nil);
+}
+
+- (void)changeCredentials:(FlutterMethodCall *)call withResult:(FlutterResult)result {
+    NSString *accountID = call.arguments[@"accountID"];
+    NSString *token = call.arguments[@"token"];
+    NSString *proxyDomain = call.arguments[@"proxyDomain"] ?: @"";
+    NSString *spikyProxyDomain = call.arguments[@"spikyProxyDomain"] ?: @"";
+
+    if (proxyDomain.length > 0 && spikyProxyDomain.length > 0) {
+        [CleverTap setCredentialsWithAccountID:accountID token:token proxyDomain:proxyDomain spikyProxyDomain:spikyProxyDomain];
+    } else if (proxyDomain.length > 0) {
+        [CleverTap setCredentialsWithAccountID:accountID token:token proxyDomain:proxyDomain];
+    } else {
+        [CleverTap setCredentialsWithAccountID:accountID andToken:token];
+    }
     result(nil);
 }
 
