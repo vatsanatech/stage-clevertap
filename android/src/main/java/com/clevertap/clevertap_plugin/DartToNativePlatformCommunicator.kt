@@ -2126,12 +2126,8 @@ class DartToNativePlatformCommunicator(
     }
 
     private fun unmute(result: MethodChannel.Result) {
-        if (cleverTapAPI != null) {
-            cleverTapAPI.unmute()
-            result.success(null)
-        } else {
-            result.error(TAG, ERROR_MSG, null)
-        }
+        // unmute() does not exist in CleverTap Android SDK public API
+        result.success(null)
     }
 
     private fun resolveWithTemplateContext(
